@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/show")
-public class MainController {
+public class UserController {
     private final DataService dataService;
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public MainController(DataService dataService,
+    public UserController(DataService dataService,
                           UserService userService,
                           UserMapper userMapper) {
         this.dataService = dataService;
@@ -29,7 +29,7 @@ public class MainController {
     }
 
     @GetMapping
-    public String test(Model model) {
+    public String showListOfUsers(Model model) {
         UserApiDto apiDto = dataService.getData("https://randomuser.me/api/?results=20",
                 UserApiDto.class);
         for (UserResponseDto dto : apiDto.getResults()) {
