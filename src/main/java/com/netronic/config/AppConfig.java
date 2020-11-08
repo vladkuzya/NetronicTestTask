@@ -2,34 +2,26 @@ package com.netronic.config;
 
 import java.util.Properties;
 import javax.sql.DataSource;
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 @Configuration
-@PropertySource("classpath:db.properties")
 @ComponentScan(basePackages = {
-        "com.netronic.service",
-        "com.netronic.dao"
+        "com.netronic.dao",
+        "com.netronic.controller",
+        "com.netronic.service"
 })
 public class AppConfig {
-    private final Environment environment;
-
-    public AppConfig(Environment environment) {
-        this.environment = environment;
-    }
-
     @Bean
     public DataSource getDataSource() {
-        BasicDataSource dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(environment.getProperty("db.driver"));
-        dataSource.setUrl(environment.getProperty("db.url"));
-        dataSource.setUsername(environment.getProperty("db.username"));
-        dataSource.setPassword(environment.getProperty("db.password"));
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/netronic?serverTimezone=UTC");
+        dataSource.setUsername("root");
+        dataSource.setPassword("1234");
         return dataSource;
     }
 
@@ -39,9 +31,8 @@ public class AppConfig {
         factoryBean.setDataSource(getDataSource());
 
         Properties properties = new Properties();
-        properties.put("hibernate.show_sql", environment.getProperty("hibernate.show_sql"));
-        properties.put("hibernate.hbm2ddl.auto",
-                environment.getProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.show_sql", "true");
+        properties.put("hibernate.hbm2ddl.auto", "update");
 
         factoryBean.setHibernateProperties(properties);
         factoryBean.setPackagesToScan("com.netronic.model");

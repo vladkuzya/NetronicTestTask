@@ -4,13 +4,15 @@ import com.netronic.dao.UserDao;
 import com.netronic.exception.DataProcessingException;
 import com.netronic.model.User;
 import java.util.List;
+import javax.persistence.criteria.CriteriaQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
-@Repository
+@Component
 public class UserDaoImpl implements UserDao {
+
     private final SessionFactory sessionFactory;
 
     public UserDaoImpl(SessionFactory sessionFactory) {
@@ -31,7 +33,7 @@ public class UserDaoImpl implements UserDao {
             if (transaction != null) {
                 transaction.rollback();
             }
-            throw new DataProcessingException("Can't insert user to DB  "
+            throw new DataProcessingException("Can't insert user to DB "
                     + user, e);
         } finally {
             if (session != null) {
@@ -43,7 +45,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getAll() {
         try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("from User", User.class).getResultList();
+            CriteriaQuery<User> criteriaQuery =
+                    session.getCriteriaBuilder().createQuery(User.class);
+            criteriaQuery.from(User.class);
+            return session.createQuery(criteriaQuery).getResultList();
         } catch (Exception e) {
             throw new DataProcessingException("Error retrieving all users", e);
         }

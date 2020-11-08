@@ -5,17 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DataService {
-
     public <T> T getData(String link, Class<? extends T> clazz) {
         try {
             URL url = new URL(link);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(HttpMethod.GET.name());
+            connection.setRequestMethod("GET");
             InputStream inputStream = connection.getInputStream();
 
             ObjectMapper objectMapper = new ObjectMapper();
